@@ -1,12 +1,8 @@
 import "./styles/global.css";
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { App } from "./app";
 
-function App() {
-  return <h1>Hello, React!</h1>;
-}
-
-// Ensure there's an element with id="root" in your HTML
 const container = document.getElementById("app");
 if (container) {
   const root = ReactDOM.createRoot(container);
