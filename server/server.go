@@ -299,7 +299,7 @@ func swaggerBasePath(w http.ResponseWriter, _ *http.Request) {
 func index(w http.ResponseWriter, r *http.Request) {
 
 	var h = `<!DOCTYPE html>
-<html lang="en" class="h-100">
+<html lang="en">
 
 <head>
 	<meta charset="utf-8">
@@ -308,17 +308,17 @@ func index(w http.ResponseWriter, r *http.Request) {
 	<meta name="robots" content="noindex, nofollow, noarchive">
 	<link rel="icon" href="{{ .Webroot }}favicon.svg">
 	<title>Mailpit</title>
-	<link rel=stylesheet href="{{ .Webroot }}dist/app.css?{{ .Version }}">
+	<link rel=stylesheet href="{{ .Webroot }}dist/index.css?{{ .Version }}">
 </head>
 
-<body class="h-100">
-	<div class="container-fluid h-100 d-flex flex-column" id="app" data-webroot="{{ .Webroot }}" data-version="{{ .Version }}">
-		<noscript class="alert alert-warning position-absolute top-50 start-50 translate-middle">
+<body>
+	<div id="app" data-webroot="{{ .Webroot }}" data-version="{{ .Version }}">
+		<noscript>
 			You need a browser with JavaScript enabled to use Mailpit
 		</noscript>
 	</div>
 
-	<script src="{{ .Webroot }}dist/app.js?{{ .Version }}" nonce="{{ .Nonce }}"></script>
+	<script src="{{ .Webroot }}dist/index.js?{{ .Version }}" nonce="{{ .Nonce }}"></script>
 </body>
 
 </html>`
