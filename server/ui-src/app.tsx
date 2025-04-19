@@ -5,7 +5,7 @@ export function App() {
   return (
     <div className="bg-gray-50 grid grid-cols-[240px_1fr] grid-rows-[auto_1fr] h-screen w-full py-6 px-8 gap-4.5">
       <header className="col-span-2">
-        <Logo />
+        <Logo aria-hidden />
       </header>
 
       <aside></aside>
