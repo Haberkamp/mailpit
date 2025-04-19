@@ -1,4 +1,5 @@
 import * as esbuild from "esbuild";
+import tailwindPlugin from "esbuild-plugin-tailwindcss";
 
 const doWatch = process.env.WATCH == "true" ? true : false;
 const doMinify = process.env.MINIFY == "true" ? true : false;
@@ -15,6 +16,11 @@ const ctx = await esbuild.context({
     ".woff2": "file",
   },
   logLevel: "info",
+  plugins: [
+    tailwindPlugin({
+      /* options */
+    }),
+  ],
 });
 
 if (doWatch) {
