@@ -6,6 +6,7 @@ import { Email } from "./components/sidebar/molecules/Email";
 import { useStableSpin } from "@stable-spin/react";
 import { Skeleton } from "./components/loading/atoms/Skeleton";
 import { SkeletonEmail } from "./components/sidebar/molecules/SkeletonEmail";
+import { Trash2 } from "lucide-react";
 
 const addressSchema = v.object({
   Name: v.optional(v.string(), ""),
@@ -113,10 +114,12 @@ export function App() {
           <Header className="text-xl font-semibold text-gray-900">Inbox</Header>
           {emails.length > 0 && !showSkeleton && (
             <Button
-              className="text-sm text-red-600 hover:text-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 rounded cursor-pointer"
+              className="text-sm flex items-center text-red-600 hover:text-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 rounded cursor-pointer"
               onPress={handleDeleteAll}
             >
-              Delete All
+              <Trash2 className="size-4 mr-1" />
+
+              <span>Delete All</span>
             </Button>
           )}
         </div>
