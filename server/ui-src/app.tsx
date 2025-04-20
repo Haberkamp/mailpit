@@ -111,7 +111,7 @@ export function App() {
       <aside>
         <div className="flex items-center justify-between">
           <Header className="text-xl font-semibold text-gray-900">Inbox</Header>
-          {emails.length > 0 && (
+          {emails.length > 0 && !showSkeleton && (
             <Button
               className="text-sm text-red-600 hover:text-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 rounded cursor-pointer"
               onPress={handleDeleteAll}
