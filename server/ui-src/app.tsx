@@ -3,6 +3,9 @@ import * as v from "valibot";
 import { Logo } from "./components/brand/atoms/Logo";
 import { Header, ListBox, Text } from "react-aria-components";
 import { Email } from "./components/sidebar/molecules/Email";
+import { useStableSpin } from "@stable-spin/react";
+import { Skeleton } from "./components/loading/atoms/Skeleton";
+import { SkeletonEmail } from "./components/sidebar/molecules/SkeletonEmail";
 
 const addressSchema = v.object({
   Name: v.optional(v.string(), ""),
@@ -33,37 +36,47 @@ type UseMailBoxReturn = {
   emails: SimplifiedEmail[];
 };
 
-function useMailBox(): UseMailBoxReturn {
+function useMailBox(): UseMailBoxReturn & { isLoading: boolean } {
   const [unreadCount, setUnreadCount] = useState(0);
   const [emails, setEmails] = useState<SimplifiedEmail[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchMessages = async () => {
-      const response = await fetch("/api/v1/messages");
-      const rawData = await response.json();
-      const parsedData = v.parse(messagesResponseSchema, rawData);
+      setIsLoading(true);
+      try {
+        const response = await fetch("/api/v1/messages");
+        const rawData = await response.json();
+        const parsedData = v.parse(messagesResponseSchema, rawData);
 
-      const simplifiedEmails = parsedData.messages.map(
-        (msg): SimplifiedEmail => ({
-          id: msg.ID,
-          senderName: msg.From?.Name || msg.From?.Address || "Unknown Sender",
-          subject: msg.Subject,
-          description: msg.Snippet,
-        })
-      );
+        const simplifiedEmails = parsedData.messages.map(
+          (msg): SimplifiedEmail => ({
+            id: msg.ID,
+            senderName: msg.From?.Name || msg.From?.Address || "Unknown Sender",
+            subject: msg.Subject,
+            description: msg.Snippet,
+          })
+        );
 
-      setUnreadCount(parsedData.messages_unread);
-      setEmails(simplifiedEmails);
+        setUnreadCount(parsedData.messages_unread);
+        setEmails(simplifiedEmails);
+      } finally {
+        setIsLoading(false);
+      }
     };
 
     fetchMessages();
   }, []);
 
-  return { unreadCount, emails };
+  return { unreadCount, emails, isLoading };
 }
 
 export function App() {
-  const { unreadCount, emails } = useMailBox();
+  const { unreadCount, emails, isLoading } = useMailBox();
+  const showSkeleton = useStableSpin(isLoading, {
+    delay: 0,
+    minDuration: 400,
+  });
 
   return (
     <div className="bg-gray-50 grid grid-cols-[240px_1fr] grid-rows-[auto_1fr] h-screen w-full py-6 px-8 gap-4.5">
@@ -74,20 +87,32 @@ export function App() {
       <aside>
         <Header className="text-xl font-semibold text-gray-900">Inbox</Header>
 
-        <Text className="block text-sm">{unreadCount} unread emails</Text>
+        {showSkeleton ? (
+          <Skeleton className="h-3 my-1 w-32" />
+        ) : isLoading ? null : (
+          <Text className="block text-sm">{unreadCount} unread emails</Text>
+        )}
 
         <div className="pt-4" />
 
-        <ListBox className="-ms-4">
-          {emails.map((email) => (
-            <Email
-              key={email.id}
-              senderName={email.senderName}
-              subject={email.subject}
-              description={email.description}
-            />
-          ))}
-        </ListBox>
+        {showSkeleton ? (
+          Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="py-4">
+              <SkeletonEmail />
+            </div>
+          ))
+        ) : (
+          <ListBox className="-ms-4">
+            {emails.map((email) => (
+              <Email
+                key={email.id}
+                senderName={email.senderName}
+                subject={email.subject}
+                description={email.description}
+              />
+            ))}
+          </ListBox>
+        )}
       </aside>
 
       <main className="bg-white rounded-lg border border-gray-300"></main>
