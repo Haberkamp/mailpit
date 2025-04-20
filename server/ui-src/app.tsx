@@ -124,7 +124,13 @@ export function App() {
         {showSkeleton ? (
           <Skeleton className="h-3 my-1 w-32" />
         ) : isLoading ? null : (
-          <Text className="block text-sm">{unreadCount} unread emails</Text>
+          <Text className="block text-sm">
+            {unreadCount === 0
+              ? "No unread emails"
+              : unreadCount === 1
+              ? "One unread email"
+              : `${unreadCount} unread emails`}
+          </Text>
         )}
 
         <div className="pt-4" />
