@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import * as v from "valibot";
 import { Logo } from "./components/brand/atoms/Logo";
-import { Header, ListBox, Text } from "react-aria-components";
+import { Header, ListBox, Text, Button } from "react-aria-components";
 import { Email } from "./components/sidebar/molecules/Email";
 import { useStableSpin } from "@stable-spin/react";
 import { Skeleton } from "./components/loading/atoms/Skeleton";
@@ -34,6 +34,8 @@ type SimplifiedEmail = {
 type UseMailBoxReturn = {
   unreadCount: number;
   emails: SimplifiedEmail[];
+  setEmails: React.Dispatch<React.SetStateAction<SimplifiedEmail[]>>;
+  setUnreadCount: React.Dispatch<React.SetStateAction<number>>;
 };
 
 function useMailBox(): UseMailBoxReturn & { isLoading: boolean } {
@@ -68,15 +70,37 @@ function useMailBox(): UseMailBoxReturn & { isLoading: boolean } {
     fetchMessages();
   }, []);
 
-  return { unreadCount, emails, isLoading };
+  return { unreadCount, emails, isLoading, setEmails, setUnreadCount };
 }
 
 export function App() {
-  const { unreadCount, emails, isLoading } = useMailBox();
+  const { unreadCount, emails, isLoading, setEmails, setUnreadCount } =
+    useMailBox();
   const showSkeleton = useStableSpin(isLoading, {
     delay: 0,
     minDuration: 400,
   });
+
+  const handleDeleteAll = async () => {
+    setEmails([]);
+    setUnreadCount(0);
+
+    try {
+      const response = await fetch("/api/v1/messages", {
+        method: "DELETE",
+      });
+
+      if (!response.ok) {
+        console.error(
+          "Failed to delete messages:",
+          response.status,
+          await response.text()
+        );
+      }
+    } catch (error) {
+      console.error("Error deleting messages:", error);
+    }
+  };
 
   return (
     <div className="bg-gray-50 grid grid-cols-[240px_1fr] grid-rows-[auto_1fr] h-screen w-full py-6 px-8 gap-4.5">
@@ -85,7 +109,17 @@ export function App() {
       </header>
 
       <aside>
-        <Header className="text-xl font-semibold text-gray-900">Inbox</Header>
+        <div className="flex items-center justify-between">
+          <Header className="text-xl font-semibold text-gray-900">Inbox</Header>
+          {emails.length > 0 && (
+            <Button
+              className="text-sm text-red-600 hover:text-red-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 rounded cursor-pointer"
+              onPress={handleDeleteAll}
+            >
+              Delete All
+            </Button>
+          )}
+        </div>
 
         {showSkeleton ? (
           <Skeleton className="h-3 my-1 w-32" />
