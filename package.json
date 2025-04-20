@@ -14,6 +14,7 @@
     "esbuild": "^0.25.0"
   },
   "dependencies": {
+    "@stable-spin/react": "^1.1.1",
     "esbuild-plugin-tailwindcss": "^2.0.1",
     "react": "^19.1.0",
     "react-aria-components": "^1.8.0",
