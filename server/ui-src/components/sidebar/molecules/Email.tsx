@@ -14,7 +14,9 @@ export function Email({ senderName, subject, description }: Props) {
 
       <Text className="block">{subject}</Text>
 
-      <Text className="text-gray-500 text-sm line-clamp-2">{description}</Text>
+      <Text className="text-gray-500 text-sm line-clamp-2 text-pretty">
+        {description}
+      </Text>
     </ListBoxItem>
   );
 }
